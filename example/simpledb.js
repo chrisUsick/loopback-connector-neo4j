@@ -9,6 +9,15 @@ Customer.create({name:'john'},function(err, data){
 	if (err) throw err;
 	console.log(data);
 
+	data.updateAttribute('town', 'Hamiota', function(err, data2){
+		console.log(data2);
+
+		Customer.find({name:'john'}, function(err, res){
+			if (err) throw err;
+			console.log(res);
+		})
+	});	
+
 	Customer.destroyAll(function(err){
 		if (err) throw err;
 	})

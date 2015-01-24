@@ -3,10 +3,11 @@ var DataSource = require('loopback-datasource-juggler').DataSource;
 
 var db, Customer;
 describe('neo4j', function(){
-	before(function () {
+	before(function (done) {
 		db = new DataSource(require('../'),{neo4j_url:'http://localhost:7474/'});
 
 		Customer = db.createModel('customer', {name:String});
+		done();
 	})
 
 	beforeEach(function(done){
@@ -60,6 +61,35 @@ describe('neo4j', function(){
 				var hasNames = res.some(function(i){ return names.indexOf(i.name) != -1})
 				assert.ok(hasNames);
 				done();
+
+			})
+		})
+	})
+
+	/*describe('find', function(){
+		it('should find the id of Jade', function(done){
+			Customer.all({name:'Jade'}, function(err, jade){
+				if (err) throw err;
+				console.log(jade);
+				done();
+			})
+		})
+	})*/
+
+	describe('updateAttributes', function(){
+		it('should update the attributes of a node', function(done){
+			Customer.find({name:'Jade'}, function(err, res){
+				var jade = res[0];
+				jade.updateAttribute('town','Winnipeg', function(err, jade2){
+					if (err) throw err;
+
+					Customer.find({name:'Jade'}, function(err, res){
+						if (err) throw err;
+						var jade3 = res[0];
+						assert.equal(jade3.town, 'Winnipeg');
+						done();
+					})
+				})
 			})
 		})
 	})
